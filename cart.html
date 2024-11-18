@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your shopping cart at Hope for Hair & Beauty. Review your selected items and proceed to checkout.">
+    <title>Your Cart - Hope for Hair & Beauty</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+    <header>
+        <div class="company-name">
+            Hope for Hair & Beauty
+            <hr class="fancy-hr">
+        </div>        
+            <div class="cart-icon">
+                <a href="cart.html">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="cart-counter">(0 items - $0.00)</span>
+                </a>
+            </div>
+            
+        </div>
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="shop.html">Shop</a>
+            <a href="tryiton.html">Try It On!</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+    
+    <section class="hero-section">
+        <h1>Your Cart</h1>
+        <p>Review your items and proceed to checkout.</p>
+    </section>
+
+    <div class="container">
+        <table id="cart-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Cart items will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <div id="cart-summary">
+            <p><strong>Total Items:</strong> <span id="total-items">0</span></p>
+            <p><strong>Total Cost:</strong> $<span id="total-cost">0.00</span></p>
+        </div>
+
+        <button id="checkout-button">Proceed to Checkout</button>
+    </div>
+
+    <footer>
+        <hr class="fancy-hr">
+        <p>&copy; 2024 Hope for Hair & Beauty. Restoring Confidence, One Style at a Time.</p>
+    </footer>
+    
+
+    <script>
+        // Retrieve cart data from localStorage or initialize an empty cart
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    
+        // Load the cart onto the cart page
+        function loadCart() {
+            const cartTable = document.querySelector("#cart-table tbody");
+            const totalItemsEl = document.getElementById("total-items");
+            const totalCostEl = document.getElementById("total-cost");
+    
+            let totalItems = 0;
+            let totalCost = 0;
+    
+            // Clear the cart table
+            cartTable.innerHTML = "";
+    
+            if (cart.length === 0) {
+                cartTable.innerHTML = `<tr><td colspan="5" style="text-align: center;">Your cart is empty.</td></tr>`;
+            } else {
+                cart.forEach((item, index) => {
+                    totalItems += item.quantity;
+                    totalCost += item.price * item.quantity;
+    
+                    const row = document.createElement("tr");
+    
+                    row.innerHTML = `
+                        <td>${item.name}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>
+                            <input type="number" value="${item.quantity}" min="1" 
+                                   onchange="updateQuantity(${index}, this.value)">
+                        </td>
+                        <td>$${(item.price * item.quantity).toFixed(2)}</td>
+                        <td><button onclick="removeItem(${index})">Remove</button></td>
+                    `;
+    
+                    cartTable.appendChild(row);
+                });
+            }
+    
+            totalItemsEl.textContent = totalItems;
+            totalCostEl.textContent = totalCost.toFixed(2);
+        }
+    
+        // Update item quantity in the cart
+        function updateQuantity(index, newQuantity) {
+            const quantity = parseInt(newQuantity);
+            if (isNaN(quantity) || quantity < 1) {
+                alert("Quantity must be a positive number.");
+                loadCart(); // Reload the cart to revert invalid changes
+                return;
+            }
+            cart[index].quantity = quantity;
+            saveCart();
+            loadCart();
+        }
+    
+        // Remove an item from the cart
+        function removeItem(index) {
+            cart.splice(index, 1);
+            saveCart();
+            loadCart();
+        }
+    
+        // Save the cart back to localStorage
+        function saveCart() {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
+    
+        // Handle checkout button click
+        document.getElementById("checkout-button").addEventListener("click", () => {
+            if (cart.length === 0) {
+                alert("Your cart is empty. Add items before proceeding to checkout.");
+                return;
+            }
+            alert("Proceeding to checkout..."); // Replace with actual checkout logic
+            // Example: Redirect to a checkout page
+            // window.location.href = "checkout.html";
+        });
+    
+        // Load cart on page load
+        document.addEventListener("DOMContentLoaded", loadCart);
+    </script>
+    
+        
+
+</body>
+</html>
